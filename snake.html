@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="snake.css">
+    <script>
+    //this is where the variables are declared that will be used throughout the game
+    
+    //the map
+    gameMap = null;
+    //gametimer is what controls the game, when the timer is set to null the game runs
+    gameTimer = null;
+    //direction is what specifiies which direction the snake is travelling
+    direction = null;
+    //snake length determines the length of the snake...
+    snakeLength = 0;
+    //defines the snakes tail
+    tail = [];
+    //constants
+    mapTop = null;
+    mapLeft = null;
+    mapRight = null;
+    mapBottom = null;
+
+    //defines if there should be another fruit set or not
+    fruitSet = null;
+    //define if a snake should be added
+    newSnake = null;
+    
+    //the players score
+    score = 0;
+
+    //this is the start function. When the button is pressed the game begins
+    function start() {       
+        if(gameTimer == null) {
+            gameTimer = window.setInterval(move, 100);
+        } else {
+            window.clearInterval(gameTimer);
+            gameTimer = null;
+        }
+    }
+
+    //this function is what moves the snake piece's
+    function move() {
+        //define where the snake is, all subsequent blocks can be grabbed by using next sibling
+        var sHead = document.getElementById('snakeHead');
+        
+        //define properites of the map
+        var gameMap = document.getElementById('map');
+        
+        //sets the fruit if it hasn't been done
+        // if(fruitSet == false) {
+        //     setFruit();
+        //     fruitSet = true;
+        // }
+
+        //define where the fruit is
+        var fruit = document.getElementById('fruit');
+
+
+        switch(direction) {
+             //up
+             case 38:
+             //stop if you hit the top
+                if(parseInt(sHead.style.top) - 10 < mapTop) {
+                    start();
+                    return;
+                }
+                sHead.style.top = parseInt(sHead.style.top) - 10 + "px";
+                slither();             
+                break;
+            //left
+            case 37:
+                if(parseInt(sHead.style.left) - 10 < mapLeft) {
+                    start();
+                    return;
+                }
+                sHead.style.left = parseInt(sHead.style.left) - 10 + "px";
+                slither();
+                break;
+            //down
+            case 40:
+                if(parseInt(sHead.style.top) + 10 >= mapBottom) {
+                    start();
+                    return;
+                }
+                sHead.style.top = parseInt(sHead.style.top) + 10 + "px";
+                slither();
+                break;
+            //right
+            case 39:
+                if(parseInt(sHead.style.left) + 10 >= mapRight) {
+                    start();
+                    return;
+                }
+                sHead.style.left = parseInt(sHead.style.left) + 10 + "px";
+                slither();
+                break;
+            default:
+                if(parseInt(sHead.style.top) - 10 < mapTop) {
+                    start();
+                    return;
+                }
+                sHead.style.top = parseInt(sHead.style.top) - 10 + "px";
+                slither();
+                break;
+        }
+        if(sHead.style.top == fruit.style.top && sHead.style.left == fruit.style.left) {
+            eatFruit();
+            fruitSet = false;
+            
+            if(fruitSet == false) {
+                setFruit();
+                fruitSet = true;
+            }
+        }       
+    }
+
+    //this function works with moving the snakes body and dealing with collisions of the snakes head with the snakes body
+    function slither() {
+        
+        var sHead = document.getElementById('snakeHead');
+
+        
+        //loop through the tail array and move the pieces
+        //how it works. Before anything happens here, the snake head is moved.
+        //the tail array is looped through from last to first, with the tail piece moving to 
+        //the position of the tail before. Once the the tail array hits the first in the array 
+        //as in the one connected to the snake head, that tail piece is positioned to where the 
+        //snake head was before by taking into account the directional movement. This is shown in the 
+        //switch statement. Why it loops through from last to first is to take into account easily turns,
+        //and to check for collisions. Basically whenever a piece is moving a check is done to assure that 
+        //the piece hit is not the one that has the snakehead in it.
+
+        for(let i = snakeLength - 1; i >= 0; i--) {
+            if(i == 0) {
+                switch(direction) {
+                    case 37:
+                        tail[i].style.left = parseInt(sHead.style.left) + 10 + "px";
+                        tail[i].style.top = sHead.style.top;
+                        break;
+                    case 38:
+                        tail[i].style.left = sHead.style.left;
+                        tail[i].style.top = parseInt(sHead.style.top) + 10 + "px";
+                        break;
+                    case 39:
+                        tail[i].style.left = parseInt(sHead.style.left) - 10 + "px";
+                        tail[i].style.top = sHead.style.top;
+                        break;
+                    case 40:
+                      
+                        tail[i].style.left = sHead.style.left;
+                        tail[i].style.top = parseInt(sHead.style.top) - 10 + "px";
+                        break;
+                    default:
+                        tail[i].style.left = sHead.style.left;
+                        tail[i].style.top = parseInt(sHead.style.top) + 10 + "px";
+                        break;
+                }
+                
+                
+            } else {
+               
+               if(newSnake == true) {
+                    tail[snakeLength] = document.createElement('div');
+                    tail[snakeLength].id = snakeLength + 1;
+                    tail[snakeLength].className = 'snake';
+                    gameMap.appendChild(tail[snakeLength]);
+
+                    tail[snakeLength].style.left = tail[i].style.left;
+                    tail[snakeLength].style.top = tail[i].style.top;
+                    
+               }
+
+               tail[i].style.left = tail[i - 1].style.left;
+               tail[i].style.top = tail[i - 1].style.top;
+               if(tail[i].style.left == sHead.style.left && tail[i].style.top == sHead.style.top) {
+                    start();
+                    
+                }
+                if(newSnake == true) {
+                    newSnake = false;
+                    snakeLength++;
+                }
+               
+                
+            }
+        }
+
+    }
+    function eatFruit() {
+        var fruit = document.getElementById('fruit');
+        var map = document.getElementById('map');
+        map.removeChild(fruit);
+        newSnake = true;
+    }
+
+    function setFruit() {
+        var sHead = document.getElementById('snakeHead');
+        var gameMap = document.getElementById('map');
+
+        leftGrid = [];
+        topGrid = [];
+         //assign the snakes heads the first spots of the array of spots
+        leftGrid[0] = parseInt(sHead.style.left);
+        topGrid[0] = parseInt(sHead.style.top);
+
+        
+        //assigns the array to the points that contain the snakes tail
+        for(let i = 0; i < snakeLength; i++) {
+            leftGrid[i + 1] = parseInt(tail[i].style.left);
+            topGrid[i + 1] = parseInt(tail[i].style.top);
+        }
+      
+        var set = false;
+
+        while(set == false) {
+            //assign two tandom x y  coordinates
+            var randLeft = Math.floor(Math.random() * 35) * 10;
+            var randTop = Math.floor(Math.random() * 35) * 10;
+            
+          
+            for(let i = 0; i < snakeLength; i++) {
+           
+                //if at any point along the length of the snake the coordinates of the snake match the coordiantes of the random x and y then break the loop and reset the random numbers
+                if(i + 1 == snakeLength) {
+                    if(leftGrid[i] == randLeft && topGrid[i] == randTop) {
+                        console.log("broke");
+                        break;
+                    } else {
+                        //set the fruit
+                        var fruit = document.createElement('div');
+                        fruit.id = 'fruit';
+                        fruit.style.left = randLeft + "px";
+                        fruit.style.top = randTop + "px";
+                        gameMap.appendChild(fruit);
+                        set = true;
+                        
+                        break;
+                    }
+                        
+                }
+                if(leftGrid[i] == randLeft && topGrid[i] == randTop) {
+               
+                    console.log("broke");
+                    break;
+                }
+                
+            }
+        }
+    }
+    
+
+    //this defines what direction the snake is going depending on which key is pressed down
+    function setKey(e) {
+        keyCode = null;
+
+        //set the keycode to the events which property. Which will specify which key is pressed. If which doesnt work then e.event does the same
+        if(e.which) {
+            keyCode = e.which;
+        } else if(e.event) {
+            keyCode = e.event;
+        }
+
+        switch(keyCode) {
+            //up
+            case 38:
+                if(direction == 40) {
+                    break;
+                } else {
+                    direction = 38;
+                }  
+                break;
+            //left
+            case 37:
+                if(direction == 39) {
+                    break;
+                } else {
+                    direction = 37;
+                }
+                break;
+            //down
+            case 40:
+                if(direction == 38 || direction == null) {
+                    break;
+                } else {
+                    direction = 40;
+                }
+                
+                break;
+            //right
+            case 39:
+                if(direction == 37) {
+                    break;
+                } else {
+                    direction = 39;
+                }
+
+                break;
+            default:
+                
+                break;
+        }
+                 
+       
+    }
+
+    //the initializing function
+    //resets the game. 
+    //Building the map, and setting the snake length
+    function init() {
+
+        //reset the snake tail counter
+        snakeLength = 0;
+        //reset snaketail array
+        tail = [];
+
+        gameMap = document.createElement('div');
+        gameMap.id = 'map';
+        gameMap.style.left = "20px";
+        gameMap.style.top = "40px";
+        gameMap.width = 350;
+        gameMap.height = 350;
+        document.body.appendChild(gameMap);
+
+        var sHead = document.createElement('div');
+        sHead.className = 'snake';
+        sHead.id = 'snakeHead';
+        sHead.style.left = map.width / 2 - 5 + "px";
+        sHead.style.top = '250px';
+        gameMap.appendChild(sHead);
+
+        //constants
+        mapTop = 0;
+        mapLeft = 0;
+        mapRight = gameMap.width;
+        mapBottom = gameMap.height;
+
+        //begins the cycle of fruit creating
+        fruitSet = false;
+        //begins the cycle of snake creating
+        newSnake = false;
+
+        //the snakes tail declaration. The tail is initialized at a length of 5. each tail is given the id of the length number it is associated with. So we can use collision checking later.
+        for(let i = 0; i < 7; i++) {
+            snakeLength++;
+            tail[i] = document.createElement('div');
+            tail[i].id = snakeLength;
+            tail[i].className = 'snake';
+            gameMap.appendChild(tail[i]);
+
+            if(tail.length <= 1) {
+                tail[i].style.top = '260px';
+            } else {
+                tail[i].style.top = parseInt(tail[i - 1].style.top) + 10 + "px"; 
+            }
+
+            tail[i].style.left = sHead.style.left;
+        }
+
+        setFruit();
+        //reset some variables
+        direction = null;
+        
+    }
+
+    onload=init;
+    onkeydown=setKey;
+    </script>
+</head>
+<body>
+    <button onclick="start()">Start</button>
+</body>
+</html>

@@ -1,0 +1,33 @@
+#map {
+    width: 350px;
+    height: 350px;
+    border: 4px solid black;
+    padding: 0;
+    position:fixed;
+  
+  
+}
+.snake {
+    width: 10px;
+    height: 10px;
+    margin: 0;
+    padding: 0;
+    background-color:red;
+    position: absolute;
+    border: none;
+}
+#snakeHead {
+    background-color: black;
+}
+button {
+    margin-left: 250px;
+    margin-bottom: 5px;
+}
+#fruit {
+    width: 10px;
+    height: 10px;
+    margin: 0;
+    padding: 0;
+    background-color: green;
+    position: absolute;
+}
