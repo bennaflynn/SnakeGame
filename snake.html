@@ -11,6 +11,10 @@
     
     //the map
     gameMap = null;
+
+    //the score box
+    scoreBox = null;
+
     //gametimer is what controls the game, when the timer is set to null the game runs
     gameTimer = null;
     //direction is what specifiies which direction the snake is travelling
@@ -33,14 +37,20 @@
     //the players score
     score = 0;
 
+    //whether or not the game restarts or not
+    died = false;
+
     //this is the start function. When the button is pressed the game begins
-    function start() {       
+    function start() {
+
         if(gameTimer == null) {
             gameTimer = window.setInterval(move, 100);
         } else {
             window.clearInterval(gameTimer);
             gameTimer = null;
+
         }
+        
     }
 
     //this function is what moves the snake piece's
@@ -196,6 +206,10 @@
         var map = document.getElementById('map');
         map.removeChild(fruit);
         newSnake = true;
+        
+        //set the score
+        score += 100;
+        updateScore();
     }
 
     function setFruit() {
@@ -251,6 +265,16 @@
                 
             }
         }
+    }
+
+    function updateScore() {
+        scoreText = document.getElementById("scoreBox");
+        scoreText.removeChild(document.getElementById('para'));
+        var newP = document.createElement('p');
+        newP.id = "para";
+        var newScore = document.createTextNode(score);
+        newP.appendChild(newScore);
+        scoreText.appendChild(newP);
     }
     
 
@@ -317,6 +341,17 @@
         snakeLength = 0;
         //reset snaketail array
         tail = [];
+
+        //set the highscore
+        scoreBox = document.createElement('div');
+        scoreBox.id = 'scoreBox';
+        gamescore = document.createElement('p');
+        gamescore.id = "para";
+        scoreText = document.createTextNode(score);
+        scoreText.id = "scoreId";
+        gamescore.appendChild(scoreText);
+        scoreBox.appendChild(gamescore);
+        document.body.appendChild(scoreBox);;
 
         gameMap = document.createElement('div');
         gameMap.id = 'map';
