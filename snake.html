@@ -48,7 +48,11 @@
         } else {
             window.clearInterval(gameTimer);
             gameTimer = null;
-
+            
+            //confirm means they clicked the okay on the alert box
+            if(confirm("Game Over! Your score was " + score)) {
+                window.location.reload();
+            }
         }
         
     }
@@ -178,6 +182,12 @@
                     tail[snakeLength] = document.createElement('div');
                     tail[snakeLength].id = snakeLength + 1;
                     tail[snakeLength].className = 'snake';
+                    if(snakeLength % 2 == 0) {
+                        tail[snakeLength].style.backgroundColor = "yellow";
+                    } else {
+                        tail[snakeLength].style.backgroundColor = "red";
+                    }
+                    
                     gameMap.appendChild(tail[snakeLength]);
 
                     tail[snakeLength].style.left = tail[i].style.left;
@@ -385,6 +395,13 @@
             tail[i] = document.createElement('div');
             tail[i].id = snakeLength;
             tail[i].className = 'snake';
+            
+            if(snakeLength % 2 == 0) {
+                tail[i].style.backgroundColor = "red";
+            } else {
+                tail[i].style.backgroundColor = "yellow";
+            }
+            
             gameMap.appendChild(tail[i]);
 
             if(tail.length <= 1) {

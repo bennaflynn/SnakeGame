@@ -28,14 +28,14 @@
     padding: 0;
     background-color:red;
     position: absolute;
-    border-left:0.5px dashed black;
-    border-right:0.5px dashed black;
+    
 }
+
 #snakeHead {
     background-color: black;
 }
 button {
-    margin-left: 250px;
+    margin-left: 175px;
     margin-bottom: 5px;
 }
 #fruit {
